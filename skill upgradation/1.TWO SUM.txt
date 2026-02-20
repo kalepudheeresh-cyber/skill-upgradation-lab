@@ -1,0 +1,274 @@
+1.TWO SUM:
+
+    #include <stdio.h>
+    int* twoSum(int* nums, int numsSize, int target, int* returnSize) {
+    static int result[2];
+    for(int i = 0; i < numsSize; i++) {
+    for(int j = i + 1; j < numsSize; j++) {
+    if(nums[i] + nums[j] == target) {
+    result[0] = i;
+    result[1] = j;
+    *returnSize = 2;
+    return result;
+           }
+         }
+       }
+    return NULL;
+    }
+
+2.Longest Substring Without Repeating Characters:
+
+    #include <stdio.h>
+    #include <string.h>
+    int lengthOfLongestSubstring(char *s) {
+    int lastSeen[256];
+    for (int i = 0; i < 256; i++)
+        lastSeen[i] = -1;
+    int left = 0, maxLen = 0;
+    for (int right = 0; s[right] != '\0'; right++) {
+        if (lastSeen[(unsigned char)s[right]] >= left) {
+            left = lastSeen[(unsigned char)s[right]] + 1;
+        }
+
+        lastSeen[(unsigned char)s[right]] = right;
+
+        int currLen = right - left + 1;
+        if (currLen > maxLen)
+            maxLen = currLen;
+    }
+    return maxLen;
+    }
+
+3.Median of Two Sorted Arrays:
+
+     #include <stdio.h>
+     #include <limits.h>
+     double findMedianSortedArrays(int* nums1, int m, int* nums2, int n) {
+     if (m > n)
+        return findMedianSortedArrays(nums2, n, nums1, m);
+     int low = 0, high = m;
+     while (low <= high) {
+        int i = (low + high) / 2;
+        int j = (m + n + 1) / 2 - i;
+        int left1  = (i == 0) ? INT_MIN : nums1[i - 1];
+        int right1 = (i == m) ? INT_MAX : nums1[i];
+        int left2  = (j == 0) ? INT_MIN : nums2[j - 1];
+        int right2 = (j == n) ? INT_MAX : nums2[j];
+        if (left1 <= right2 && left2 <= right1) {
+            if ((m + n) % 2 == 0) {
+                int maxLeft = (left1 > left2) ? left1 : left2;
+                int minRight = (right1 < right2) ? right1 : right2;
+                return (maxLeft + minRight) / 2.0;
+            } else {
+                return (left1 > left2) ? left1 : left2;
+            }
+        }
+        else if (left1 > right2) {
+            high = i - 1;
+        }
+        else {
+            low = i + 1;
+          }
+        }
+       return 0.0; 
+      }
+
+4.Longest Palindromic Substring:
+
+     #include <stdio.h>
+     #include <string.h>
+     void expand(char* s, int left, int right, int* start, int* maxLen) {
+     int n = strlen(s);
+     while (left >= 0 && right < n && s[left] == s[right]) {
+        if (right - left + 1 > *maxLen) {
+            *start = left;
+            *maxLen = right - left + 1;
+          }
+          left--;
+          right++;
+        }
+      }
+     char* longestPalindrome(char* s) {
+     static char result[1001];
+     int n = strlen(s);
+     if (n == 0) {
+        result[0] = '\0';
+        return result;
+     }
+     int start = 0, maxLen = 1;
+     for (int i = 0; i < n; i++) {
+        expand(s, i, i, &start, &maxLen);
+        expand(s, i, i + 1, &start, &maxLen);
+     }
+     strncpy(result, s + start, maxLen);
+     result[maxLen] = '\0';
+     return result;
+    }
+
+
+5.Zigzag Conversion:
+  
+    #include <string.h>
+    #include <stdlib.h>
+    char* convert(char* s, int r){
+    int n=strlen(s), c=2*(r-1), k=0;
+    if(r==1||r>=n) return s;
+    char* a=malloc(n+1);
+    for(int i=0;i<r;i++)
+        for(int j=i;j<n;j+=c){
+            a[k++]=s[j];
+            if(i&&i!=r-1&&j+c-2*i<n)
+                a[k++]=s[j+c-2*i]; 
+           }
+           a[k]='\0'; return a;
+     }
+
+6.Reverse Integer:
+    
+   #include<stdio.h>
+   int reverse(int x){
+   int r=0;
+   while(x){
+        int d=x%10;
+        if(r>214748364||r<-214748364) return 0;
+        if(r==214748364&&d>7) return 0;
+        if(r==-214748364&&d<-8) return 0;
+        r=r*10+d;
+        x/=10;
+     }
+     return r;
+   }
+
+7.String to Integer (atoi):
+
+    #include<stdio.h>
+    int myAtoi(char* s){
+    int i=0,sign=1,res=0;
+    while(s[i]==' ') i++;
+    if(s[i]=='+'||s[i]=='-') sign=s[i++]=='-'?-1:1;
+    while(s[i]>='0'&&s[i]<='9'){
+        int d=s[i++]-'0';
+        if(res>214748364||(res==214748364&&d>7))
+            return sign==1?2147483647:-2147483648;
+        res=res*10+d;
+     }
+      return sign*res;
+    }
+
+8.Palindrome Number:
+
+    #include <stdbool.h>
+    bool isPalindrome(int x){
+    if(x<0 || (x%10==0 && x!=0)) return false;
+    int r=0;
+    while(x>r){
+        r=r*10+x%10;
+        x/=10;
+    }
+      return x==r || x==r/10;
+    }
+
+9.Regular Expression Matching:
+
+     #include <string.h>
+     #include <stdbool.h>
+     bool isMatch(char* s,char* p){
+     int m=strlen(s),n=strlen(p); bool dp[21][21]={0};
+     dp[0][0]=1;
+     for(int j=2;j<=n;j++) if(p[j-1]=='*') dp[0][j]=dp[0][j-2];
+     for(int i=1;i<=m;i++)
+        for(int j=1;j<=n;j++)
+            if(p[j-1]=='.'||p[j-1]==s[i-1]) dp[i][j]=dp[i-1][j-1];
+            else if(p[j-1]=='*'){
+                dp[i][j]=dp[i][j-2];
+                if(p[j-2]=='.'||p[j-2]==s[i-1]) dp[i][j]|=dp[i-1][j];
+            }
+      return dp[m][n];
+     }
+
+10.Container With Most Water:
+
+     #include<stdio.h>
+     int maxArea(int* h, int n){
+     int l=0,r=n-1,ans=0;
+     while(l<r){
+        int ht=h[l]<h[r]?h[l]:h[r];
+        int area=ht*(r-l);
+        if(area>ans) ans=area;
+        if(h[l]<h[r]) l++;
+        else r--;
+     }
+     return ans;
+     }
+
+11.Integer to Roman:
+
+     #include <stdio.h>
+     #include <stdlib.h>
+     #include <string.h>
+     char* intToRoman(int num) {
+     int values[]   = {1000,900,500,400,100,90,50,40,10,9,5,4,1};
+     char* symbols[]= {"M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"};
+     static char result[20];
+     int k=0;
+     for(int i=0;i<13;i++){
+        while(num>=values[i]){
+            strcpy(result+k,symbols[i]);
+            k+=strlen(symbols[i]);
+            num-=values[i];
+          }
+       }
+        result[k]='\0';
+        return result;
+     }
+
+12.Roman to Integer:
+
+      #include <stdio.h>
+      int romanToInt(char* s){
+      int val(char c){
+        switch(c){
+            case 'I': return 1;
+            case 'V': return 5;
+            case 'X': return 10;
+            case 'L': return 50;
+            case 'C': return 100;
+            case 'D': return 500;
+            case 'M': return 1000;
+           }
+           return 0;
+        }
+        int res=0;
+       for(int i=0;s[i];i++){
+        if(val(s[i]) < val(s[i+1])) res -= val(s[i]);
+        else res += val(s[i]);
+      }
+      return res;
+     }
+
+13.Longest Common Prefix:
+
+     #include <stdio.h>
+     #include <string.h>
+     char* longestCommonPrefix(char** strs, int strsSize){
+     static char res[201];
+     if(strsSize==0) return "";
+     int i,j;
+     for(i=0; strs[0][i]; i++){
+        char c = strs[0][i];
+        for(j=1; j<strsSize; j++){
+            if(strs[j][i]==0 || strs[j][i]!=c)
+                goto end;
+            }
+        }
+     end:
+      strncpy(res, strs[0], i);
+      res[i]='\0';
+      return res;
+     }
+
+
+
+
+
+
